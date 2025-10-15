@@ -1,47 +1,44 @@
 #include <ESP8266WiFi.h>
-#include <WiFiClientSecure.h>
-#include <UniversalTelegramBot.h>
-#include <ArduinoJson.h>
+#include <ESP8266HTTPClient.h>
 
-#include "config.h"
-#include "user.h"
-#include "bot_handler.h"
+const char* ssid = "Aliffka";
+const char* password = "19fuckyoubitch1041";
+const char* serverUrl = "http://192.168.255.89:8080/api/next_drink";
 
-WiFiClientSecure client;
-UniversalTelegramBot bot(Config::BotToken, client);
-UserStateManager userStateManager;
-BotHandler botHandler{&bot, &userStateManager};
-
-void connectToWifi();
-void handleTelegramMessages();
-void sendWelcomeMessage();
+WiFiClient wifiClient; 
 
 void setup() {
-    Serial.begin(Config::SerialBaud);
-    Serial.println("[DEBUG]: started"); // DEBUG
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
 
-    connectToWifi();
-    Serial.println("[DEBUG]: connected"); // DEBUG
-
-    client.setInsecure();
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi connected!");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
-    handleTelegramMessages();
-    delay(Config::MessageProcessingDelay);
-}
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(wifiClient, serverUrl);  // ✅ теперь правильный вызов
+    int httpCode = http.GET();
 
-void handleTelegramMessages() {
-    size_t numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-    for (size_t  i = 0; i < numNewMessages; i++) {
-        Serial.println(bot.messages[i].text); // DEBUG
-        botHandler.processMessage(String(bot.messages[i].chat_id), bot.messages[i].text);
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      Serial.println("Drink: " + payload);
+    } else {
+      Serial.printf("HTTP error: %d\n", httpCode);
     }
-}
 
-void connectToWifi() {
-    WiFi.begin(Config::SSID, Config::Password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(Config::WifiConnectionDelay);
-    }
+    http.end();
+  } else {
+    Serial.println("WiFi disconnected, reconnecting...");
+    WiFi.begin(ssid, password);
+  }
+
+  delay(5000); // опрос каждые 5 секунд
 }
