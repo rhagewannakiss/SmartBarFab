@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -9,18 +10,8 @@ import (
 
 	"github.com/a-palonskaa/SmartBar/tg_bot/internal/coctail"
 	"github.com/a-palonskaa/SmartBar/tg_bot/internal/config"
+	"github.com/a-palonskaa/SmartBar/tg_bot/internal/msg"
 )
-
-var MessageConfig = map[string]string{
-	"welcome":      "sosite-suki пиздатый проект вас приветствует🙌\nавторизуйтесь через /password [пароль]\nYours aliffka ❤️",
-	"authorize":    "ах, котик, у тебя слишком большой... ввод...",
-	"authOK":       "welcome to the club buddy",
-	"authFail":     "unluck, my friend",
-	"wrongcommand": "по клавишам научись попадать, наш дорогой пользователь💋",
-	"commands":     "у вас следующие возможности:\n/make_drink\n/delay_drink [минуты]",
-	"choose":       "доступные коктейли:\n" + coctail.BuildCoctailList(),
-	"prepare":      "совсем скоро вы насладитесь необыкновенным ",
-}
 
 func (us *UserSessions) HandleMessage(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
 	chatID := msg.Chat.ID
@@ -34,12 +25,14 @@ func (us *UserSessions) HandleMessage(bot *tgbotapi.BotAPI, msg *tgbotapi.Messag
 		us.HandleAuthorized(bot, chatID, text)
 	case WAIT_DRINK:
 		us.HandleWaitDrink(bot, chatID, text)
+	case RECOMMENDATION_STEP1:
+		us.HandleRecommendationStep1(bot, chatID, text)
 	}
 }
 
 func (us *UserSessions) HandleWaitPassword(bot *tgbotapi.BotAPI, chatID int64, text string) {
 	if text == "/start" {
-		bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["welcome"]))
+		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgStart.String()))
 		return
 	}
 
@@ -47,21 +40,26 @@ func (us *UserSessions) HandleWaitPassword(bot *tgbotapi.BotAPI, chatID int64, t
 		password := text[10:]
 		if password == config.BotPassword {
 			us.GetSession(chatID).State = AUTHORIZED
-			bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["authOK"]))
-			bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["commands"]))
+			bot.Send(tgbotapi.NewMessage(chatID, msg.MsgPasswordOK.String()))
+			bot.Send(tgbotapi.NewMessage(chatID, msg.MsgAuthorizedCmdOptions.String()))
 		} else {
-			bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["authFail"]))
+			bot.Send(tgbotapi.NewMessage(chatID, msg.MsgPasswordFail.String()))
 		}
 		return
 	}
 
-	bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["authorize"]))
+	bot.Send(tgbotapi.NewMessage(chatID, msg.MsgWrongCmdAfterStart.String()))
 }
 
 func (us *UserSessions) HandleAuthorized(bot *tgbotapi.BotAPI, chatID int64, text string) {
 	if text == "/make_drink" {
 		us.GetSession(chatID).State = WAIT_DRINK
-		bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["choose"]))
+		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgMakeDrink.String()))
+		return
+	}
+
+	if text == "/recommend_drink" {
+		us.RecommendDrink(bot, chatID)
 		return
 	}
 
@@ -69,25 +67,25 @@ func (us *UserSessions) HandleAuthorized(bot *tgbotapi.BotAPI, chatID int64, tex
 		delayMin, _ := strconv.Atoi(text[13:])
 		us.scheduleDrink(chatID, delayMin)
 		us.GetSession(chatID).State = WAIT_DRINK
-		bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["choose"]))
+		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgMakeDrink.String()))
 		return
 	}
 
-	bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["wrongcommand"]))
-	bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["commands"]))
+	bot.Send(tgbotapi.NewMessage(chatID, msg.MsgWrongCommandAuthorized.String()))
+	bot.Send(tgbotapi.NewMessage(chatID, msg.MsgAuthorizedCmdOptions.String()))
 }
 
 func (us *UserSessions) HandleWaitDrink(bot *tgbotapi.BotAPI, chatID int64, text string) {
 	drink, ok := coctail.TgCoctailNamesToIR[text]
 	if !ok {
-		bot.Send(tgbotapi.NewMessage(chatID, MessageConfig["choose"]))
+		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgMakeDrink.String()))
 		return
 	}
 
 	session := us.GetSession(chatID)
 	session.ScheduledDrink = drink
-	session.State = DONE
-	bot.Send(tgbotapi.NewMessage(chatID, fmt.Sprintf("%s '%s'", MessageConfig["prepare"], coctail.CoctailToNames[drink])))
+	session.State = AUTHORIZED
+	bot.Send(tgbotapi.NewMessage(chatID, fmt.Sprintf("%s '%s'", msg.MsgWaitDrink, coctail.CoctailToNames[drink])))
 }
 
 func (us *UserSessions) scheduleDrink(chatID int64, delayMin int) {
@@ -97,4 +95,46 @@ func (us *UserSessions) scheduleDrink(chatID int64, delayMin int) {
 	} else {
 		session.ScheduledTime = time.Now()
 	}
+}
+
+func (us *UserSessions) RecommendDrink(bot *tgbotapi.BotAPI, chatID int64) {
+	buttons := tgbotapi.NewReplyKeyboard(
+		tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton(coctail.CategoryAlcoFree.String()),
+			tgbotapi.NewKeyboardButton(coctail.CategoryLightAlco.String()),
+			tgbotapi.NewKeyboardButton(coctail.CategoryStrongAlco.String()),
+		),
+	)
+
+	msg := tgbotapi.NewMessage(chatID, "Предпочитаешь безалкогольный, слабоалкогольный или крепкий напиток?")
+	msg.ReplyMarkup = buttons
+	bot.Send(msg)
+
+	session := us.GetSession(chatID)
+	session.State = RECOMMENDATION_STEP1
+}
+
+func (us *UserSessions) HandleRecommendationStep1(bot *tgbotapi.BotAPI, chatID int64, text string) {
+	session := us.GetSession(chatID)
+
+	category, err := coctail.GetCategoryFromString(text)
+	if err != nil {
+		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgWrongInput.String()))
+		return
+	}
+
+	drinks, ok := coctail.DrinksByCategory[category]
+	if !ok || len(drinks) == 0 {
+		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgWrongInput.String()))
+		return
+	}
+
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+	session.ScheduledDrink = drinks[rand.Intn(len(drinks))]
+	session.State = AUTHORIZED
+
+	ms := tgbotapi.NewMessage(chatID, fmt.Sprintf("%s '%s'", msg.MsgWaitDrink, coctail.CoctailToNames[session.ScheduledDrink]))
+	removeKeyboard := tgbotapi.NewRemoveKeyboard(true)
+	ms.ReplyMarkup = removeKeyboard
+	bot.Send(ms)
 }

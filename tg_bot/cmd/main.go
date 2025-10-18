@@ -47,8 +47,6 @@ func main() {
 		log.Info().Msg("API started on :" + config.ServerPort)
 		if err := srv.ListenAndServe(); err != nil {
 			serverErr <- err
-		} else {
-			close(serverErr)
 		}
 
 	}()
@@ -59,6 +57,7 @@ func main() {
 			select {
 			case <-ctx.Done():
 				bot.StopReceivingUpdates()
+				return
 			case update := <-updates:
 				if update.Message == nil {
 					continue
@@ -70,19 +69,11 @@ func main() {
 		}
 	}()
 
-	go func() {
-		select {
-		case <-serverErr:
-			cancel()
-		case <-ctx.Done():
-			if err := srv.Shutdown(ctx); err != nil {
-				log.Error().Err(err).Msg("error during server shutdown")
-			}
-		}
-	}()
-
 	<-stop
 	cancel()
+	if err := srv.Shutdown(context.Background()); err != nil {
+		log.Error().Err(err).Msg("error during server shutdown")
+	}
 }
 
 func getUpdatesChan(bot *tgbotapi.BotAPI) tgbotapi.UpdatesChannel {

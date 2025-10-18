@@ -1,6 +1,7 @@
 package coctail
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -126,4 +127,36 @@ func BuildCoctailList() string {
 		sb.WriteString("\n")
 	}
 	return sb.String()
+}
+
+type Category string
+
+const (
+	CategoryAlcoFree   Category = "Безалкогольный"
+	CategoryLightAlco  Category = "Слабоалкогольный"
+	CategoryStrongAlco Category = "Крепкий"
+)
+
+func (c Category) String() string {
+	return string(c)
+}
+
+var categoryMap = map[string]Category{
+	CategoryAlcoFree.String():   CategoryAlcoFree,
+	CategoryLightAlco.String():  CategoryLightAlco,
+	CategoryStrongAlco.String(): CategoryStrongAlco,
+}
+
+func GetCategoryFromString(s string) (Category, error) {
+	cat, ok := categoryMap[s]
+	if !ok {
+		return "", errors.New("unknown category")
+	}
+	return cat, nil
+}
+
+var DrinksByCategory = map[Category][]Coctail{
+	CategoryAlcoFree:   {PINKYMONSTER, TROPICALMIX},
+	CategoryLightAlco:  {BLUELOGOON, LONGISLAND},
+	CategoryStrongAlco: {DOUBLE_TROUBLE},
 }
