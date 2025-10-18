@@ -34,3 +34,20 @@
 {"level":"info","time":"2025-10-15 13:11:59","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
 {"level":"info","time":"2025-10-15 13:13:32","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
 {"level":"info","time":"2025-10-15 13:13:39","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 11:27:32","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 11:44:51","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"error","time":"2025-10-18 11:45:35","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:66","message":"server error"}
+{"level":"info","time":"2025-10-18 11:45:37","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 11:48:52","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 11:52:15","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 11:53:13","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:02:58","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:05:22","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:06:22","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:06:25","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:07:55","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:08:00","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:08:14","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:46","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:08:45","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:46","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:10:36","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
+{"level":"info","time":"2025-10-18 12:10:38","caller":"/Users/laptop/Desktop/Projects/SmartBar/tg_bot/cmd/main.go:47","message":"API started on :8080"}
