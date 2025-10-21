@@ -21,7 +21,7 @@ func NextDrinkHandler(userSessions *session.UserSessions) http.HandlerFunc {
 				drink := userSession.ScheduledDrink
 				userSession.ScheduledDrink = coctail.UNDEFINED
 				userSession.State = session.AUTHORIZED
-				log.Info().Msgf("ESP got '%s' from %d", drink, id)
+				log.Info().Msgf("sent to esp '%s' from %d", drink, id)
 				w.Write([]byte(coctail.CoctailToESPNames[drink]))
 				return
 			}

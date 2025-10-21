@@ -9,7 +9,6 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	"github.com/a-palonskaa/SmartBar/tg_bot/internal/coctail"
-	"github.com/a-palonskaa/SmartBar/tg_bot/internal/config"
 	"github.com/a-palonskaa/SmartBar/tg_bot/internal/msg"
 )
 
@@ -38,7 +37,7 @@ func (us *UserSessions) HandleWaitPassword(bot *tgbotapi.BotAPI, chatID int64, t
 
 	if len(text) > 10 && text[:10] == "/password " {
 		password := text[10:]
-		if password == config.BotPassword {
+		if password == us.Password {
 			us.GetSession(chatID).State = AUTHORIZED
 			bot.Send(tgbotapi.NewMessage(chatID, msg.MsgPasswordOK.String()))
 			bot.Send(tgbotapi.NewMessage(chatID, msg.MsgAuthorizedCmdOptions.String()))
@@ -84,7 +83,7 @@ func (us *UserSessions) HandleWaitDrink(bot *tgbotapi.BotAPI, chatID int64, text
 
 	session := us.GetSession(chatID)
 	session.ScheduledDrink = drink
-	session.State = AUTHORIZED
+	session.State = DONE //ХУЙНЯ -
 	bot.Send(tgbotapi.NewMessage(chatID, fmt.Sprintf("%s '%s'", msg.MsgWaitDrink, coctail.CoctailToNames[drink])))
 }
 
@@ -100,13 +99,13 @@ func (us *UserSessions) scheduleDrink(chatID int64, delayMin int) {
 func (us *UserSessions) RecommendDrink(bot *tgbotapi.BotAPI, chatID int64) {
 	buttons := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(coctail.CategoryAlcoFree.String()),
-			tgbotapi.NewKeyboardButton(coctail.CategoryLightAlco.String()),
-			tgbotapi.NewKeyboardButton(coctail.CategoryStrongAlco.String()),
+			tgbotapi.NewKeyboardButton(coctail.AlcoCategoryAlcoFree.String()),
+			tgbotapi.NewKeyboardButton(coctail.AlcoCategoryLightAlco.String()),
+			tgbotapi.NewKeyboardButton(coctail.AlcoCategoryStrongAlco.String()),
 		),
 	)
 
-	msg := tgbotapi.NewMessage(chatID, "Предпочитаешь безалкогольный, слабоалкогольный или крепкий напиток?")
+	msg := tgbotapi.NewMessage(chatID, "на зоже, легкий или покрепче?")
 	msg.ReplyMarkup = buttons
 	bot.Send(msg)
 
@@ -123,7 +122,7 @@ func (us *UserSessions) HandleRecommendationStep1(bot *tgbotapi.BotAPI, chatID i
 		return
 	}
 
-	drinks, ok := coctail.DrinksByCategory[category]
+	drinks, ok := coctail.DrinksByAlcoCategory[category]
 	if !ok || len(drinks) == 0 {
 		bot.Send(tgbotapi.NewMessage(chatID, msg.MsgWrongInput.String()))
 		return

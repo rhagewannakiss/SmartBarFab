@@ -1,10 +1,12 @@
 package session
 
 import (
+	"os"
 	"sync"
 	"time"
 
 	"github.com/a-palonskaa/SmartBar/tg_bot/internal/coctail"
+	"github.com/a-palonskaa/SmartBar/tg_bot/internal/config"
 )
 
 type SessionState int
@@ -25,12 +27,14 @@ type UserSession struct {
 
 type UserSessions struct {
 	Sessions map[int64]*UserSession
+	Password string
 	Mu       sync.Mutex
 }
 
 func NewUserSessions() *UserSessions {
 	return &UserSessions{
 		Sessions: make(map[int64]*UserSession, 0),
+		Password: os.Getenv(config.BotPasswordEnv),
 	}
 }
 

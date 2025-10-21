@@ -19,7 +19,8 @@ import (
 
 func main() {
 	logger.InitLogger("logs/info.log")
-	bot, err := tgbotapi.NewBotAPI(config.BotToken)
+
+	bot, err := tgbotapi.NewBotAPI(os.Getenv(config.BotTokenEnv))
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create a new BotAPI instance")
 	}

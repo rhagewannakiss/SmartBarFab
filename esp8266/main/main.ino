@@ -1,5 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <SoftwareSerial.h>
 
 const char* ssid = "Aliffka";
 const char* password = "19fuckyoubitch1041";
@@ -10,18 +11,11 @@ WiFiClient wifiClient;
 void setup() {
   Serial.begin(115200);
 
-  Serial1.begin(9600, SERIAL_8N1, D2, D1);
-
   WiFi.begin(ssid, password);
 
-  Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
   }
-  Serial.println("\nWiFi connected!");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
 }
 
 void loop() {
@@ -32,16 +26,11 @@ void loop() {
 
     if (httpCode == HTTP_CODE_OK) {
       String payload = http.getString();
-      Serial1.println(payload);
-      Serial.println("Sent to Arduino: " + command);
-    } else {
-      Serial.printf("HTTP error: %d\n", httpCode);
-    }
+      payload.trim();
 
+      Serial.println(payload);
+    } 
     http.end();
-  } else {
-    Serial.println("WiFi disconnected, reconnecting...");
-    WiFi.begin(ssid, password);
   }
 
   delay(5000);

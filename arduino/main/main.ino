@@ -1,47 +1,36 @@
 void setup() {
-    Serial.begin(9600);
-
-    pinMode(13, OUTPUT);
-    digitalWrite(13, LOW);
-
-    pinMode(12, OUTPUT);
-    digitalWrite(12, LOW);
+    Serial.begin(9600);   // Serial для монитора порта (USB)
+    Serial1.begin(115200);  // Serial1 для ESP8266 (RX1=Pin19, TX1=Pin18)
+    
+    Serial.println("Arduino Mega ready...");
+    Serial.println("Waiting for commands from ESP8266...");
 }
 
 void loop() {
-  if (Serial.available()) {
-    String command = Serial.readString();
+  // Проверяем данные от ESP8266 через Serial1
+  if (Serial1.available()) {
+    Serial.println("available");
+    String command = Serial1.readString();
     command.trim();
+    Serial.println("Received from ESP: '" + command + "'");
     processCommand(command);
   }
+  delay(10000);
+  Serial.println("unavailable");
 }
 
 void processCommand(String command) {
+  Serial.println("Processing command: " + command);
+  
   if (command == "MOJITO") {
-    makeMojito();
+    Serial.println("=== MAKING MOJITO ===");
   }
   else if (command == "MARGARITA") {
-    makeMargarita();
+    Serial.println("=== MAKING MARGARITA ===");
   }
   else {
-    sendResponse("UNKNOWN_COMMAND");
+    Serial.println("!!! UNKNOWN COMMAND: " + command);
   }
-}
-
-void makeMojito() {
-    for(int i = 0; i < 5; i++) {
-        digitalWrite(13, HIGH);
-        delay(500);
-        digitalWrite(13, LOW);
-        delay(500);
-    }
-}
-
-void makeMargarita() {
-    for(int i = 0; i < 3; i++) {
-        digitalWrite(12, HIGH);
-        delay(300);
-        digitalWrite(12, LOW);
-        delay(300);
-    }
+  
+  Serial.println("Waiting for next command...");
 }
