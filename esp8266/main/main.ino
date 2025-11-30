@@ -4,7 +4,7 @@
 
 const char* ssid = "Aliffka";
 const char* password = "19fuckyoubitch1041";
-const char* serverUrl = "http://192.168.255.89:8080/api/next_drink";
+const char* serverUrl = "http://192.168.106.89:8080/api/next_drink";
 
 WiFiClient wifiClient;
 

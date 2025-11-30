@@ -23,12 +23,12 @@ const int STEP_PIN = 9;   // step (pulse)
 const int ENABLE_PIN = 10;
 const float STEP_ANGLE = 1.8; // degrees per full step
 const int stepsPerRev = (int)(360.0 / STEP_ANGLE); // 200
-const float degreesToMove = 60.0;
+const float degreesToMove = 500.0;
 const int microstep = 1; // 1 = full step, 2 = half, 4 = 1/4, 8 = 1/8, 16 = 1/16
 
 // delays for speed
 const unsigned long stepPulseWidth = 2000;   // STEP pulse width (us)
-const unsigned long stepDelay      = 2000;   // delay between pulses (us)
+const unsigned long stepDelay      = 10000;   // delay between pulses (us)
 
 long stepsNeeded = 0;
 
@@ -40,17 +40,31 @@ int motorCounts[] = {0, 0, 0, 0, 0, 0};
 int timePortion[] = {15060, 14820, 14750, 14810, 15270, 15510, 16070, 16290, 17270, 17730, 18730, 19780, 20860, 25680};
 
 void initMotors() {
-  m1.attach(9);
-  m2.attach(10);
-  m3.attach(11);
-  m4.attach(12);
-  m5.attach(13);
-  m6.attach(14);
+  m1.attach(2);
+  m2.attach(3);
+  m3.attach(4);
+  m4.attach(5);
+  m5.attach(6);
+  m6.attach(7);
 }
 
 void initSerialPorts() {
   Serial.begin(9600);
   Serial1.begin(115200);  // RX1 = Pin 19, TX1 = Pin 18
+}
+
+const int R_PIN = 11;
+const int G_PIN = 10;
+const int B_PIN = 22;
+
+void initLightning() {
+  pinMode(R_PIN, OUTPUT);
+  pinMode(G_PIN, OUTPUT);
+  pinMode(B_PIN, OUTPUT);
+
+  analogWrite(R_PIN, 0);
+  analogWrite(G_PIN, 0);
+  analogWrite(B_PIN, 0);
 }
 
 void poorLiquid(Drinks liquidType, int portion) {
@@ -64,11 +78,15 @@ void poorLiquid(Drinks liquidType, int portion) {
     for (int n = number-1; n < number + portion; n++) {
         time += timePortion[n];
     }
-
-    drinkMotors[liquidType]->write(90);
-    motorCounts[liquidType] += portion;
-    delay(time);
-    drinkMotors[liquidType]->write(0);
+    
+  motorCounts[liquidType] += portion;
+  drinkMotors[liquidType]->write(70);   // вернуться
+  delay(770);
+  drinkMotors[liquidType]->write(90);
+  delay(time);
+  drinkMotors[liquidType]->write(70);   // вернуться
+  delay(760);
+  drinkMotors[liquidType]->write(90);
 }
 
 //---------------lower servo---------------
@@ -306,9 +324,28 @@ void cookVODKA() {
     stepMotor(6*stepsNeeded);
 }
 
+void migRed() {
+  analogWrite(R_PIN, 255);
+  analogWrite(G_PIN, 0);
+  analogWrite(B_PIN, 0);
+}
+
+void migBlue() {
+  analogWrite(R_PIN, 0);
+  analogWrite(G_PIN, 0);
+  analogWrite(B_PIN, 255);
+}
+
+void migGreen() {
+  analogWrite(R_PIN, 0);
+  analogWrite(G_PIN, 255);
+  analogWrite(B_PIN, 0);
+}
+
 void processCommand(String command) {
     Serial.println("Processing: " + command);
 
+migBlue();
     if (command == "LONGISLAND") {
         cookLONGISLAND();
     } else if (command == "BLUELOGOON") {
@@ -358,6 +395,8 @@ void processCommand(String command) {
     } else {
         Serial.println("unknown coctail " + command); // DEBUG
     }
+    migRed();
+    delay(1000);
 }
 
 void addCommandToQueue(String command) {
@@ -371,9 +410,12 @@ void addCommandToQueue(String command) {
 void setup() {
   initMotors();
   initSerialPorts();
+  iniLowerServo();
+  initLightning();
 }
 
 void loop() {
+    migGreen();
   if (Serial1.available()) {
     String command = Serial1.readString();
     command.trim();
