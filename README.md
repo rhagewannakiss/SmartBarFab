@@ -2,7 +2,7 @@
 
 Transforming Drinks with Intelligent Automation and Style  
 
-**Telegram:** [Chanel](https://t.me/smart_bar_fab) | [Bot](https://t.me/SmartBarBot)
+**Telegram:** [Канал](https://t.me/smart_bar_fab) | [Бот](https://t.me/SmartBarBot)
 
 <a href="https://github.com/a-palonskaa/SmartBarFab/commits/main">
   <img src="https://img.shields.io/github/last-commit/a-palonskaa/SmartBarFab" alt="Last Commit">
@@ -31,6 +31,8 @@ Transforming Drinks with Intelligent Automation and Style
 ## Table of Contents
 
 - [Overview](#overview)  
+  - [Why SmartBarFab?](#why-smartbarfab)
+  - [Hardware Components](#hardware-components)
 - [Getting Started](#getting-started)  
   - [Prerequisites](#prerequisites)  
   - [Installation](#installation)  
@@ -44,6 +46,7 @@ Transforming Drinks with Intelligent Automation and Style
 
 SmartBarFab is a versatile platform designed to streamline the development of automated beverage dispensing systems. It combines hardware control, real-time user interaction, and personalized recommendations into a cohesive architecture, enabling scalable and engaging smart bar solutions.
 
+<a name="why-smartbarfab"></a>
 ### Why SmartBarFab?
 
 This project aims to simplify the creation of intelligent, user-centric bar experiences by integrating motorized hardware, messaging interfaces, and dynamic recommendations. The core features include:
@@ -54,6 +57,24 @@ This project aims to simplify the creation of intelligent, user-centric bar expe
 - **IoT Integration:** Connects microcontrollers like ESP8266 and Arduino for remote control and real-time updates.
 - **Configurable & Debuggable:** Centralized configuration and robust logging facilitate development and troubleshooting.
 - **Modular Architecture:** Well-structured components enable easy extension and maintenance.
+
+<a name="hardware-components"></a>
+### Hardware Components
+
+The system utilizes the following hardware components:
+
+- **Microcontrollers:**
+  - Arduino Mega 2560
+  - ESP8266 Wi-Fi module
+- **Motors and Actuators:**
+  - Stepper motor with driver and shield
+  - 6 × FG946 servo motors
+- **Lighting:**
+  - LED strip for ambient lighting
+- **Other Components:**
+  - Liquid pumps and dispensers
+  - Sensors for level monitoring
+  - Power management system
 
 ---
 
