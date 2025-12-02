@@ -2,7 +2,7 @@
 
 Transforming Drinks with Intelligent Automation and Style  
 
-**Telegram:** [Канал](https://t.me/smart_bar_fab) | [Бот](https://t.me/SmartBarBot)
+**Telegram:** [Chanel](https://t.me/smart_bar_fab) | [Bot](https://t.me/SmartBarBot)
 
 <a href="https://github.com/a-palonskaa/SmartBarFab/commits/main">
   <img src="https://img.shields.io/github/last-commit/a-palonskaa/SmartBarFab" alt="Last Commit">
