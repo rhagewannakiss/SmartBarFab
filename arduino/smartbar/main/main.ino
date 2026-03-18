@@ -23,7 +23,7 @@ const int STEP_PIN = 9;   // step (pulse)
 const int ENABLE_PIN = 10;
 const float STEP_ANGLE = 1.8; // degrees per full step
 const int stepsPerRev = (int)(360.0 / STEP_ANGLE); // 200
-const float degreesToMove = 500.0;
+const float degreesToMove = 600.0;
 const int microstep = 1; // 1 = full step, 2 = half, 4 = 1/4, 8 = 1/8, 16 = 1/16
 
 // delays for speed
@@ -40,12 +40,12 @@ int motorCounts[] = {0, 0, 0, 0, 0, 0};
 int timePortion[] = {15060, 14820, 14750, 14810, 15270, 15510, 16070, 16290, 17270, 17730, 18730, 19780, 20860, 25680};
 
 void initMotors() {
-  m1.attach(2);
-  m2.attach(3);
-  m3.attach(4);
-  m4.attach(5);
-  m5.attach(6);
-  m6.attach(7);
+  m1.attach(4);
+  m2.attach(7);
+  m3.attach(2);
+  m4.attach(6);
+  m5.attach(3);
+  m6.attach(5);
 }
 
 void initSerialPorts() {
@@ -80,13 +80,10 @@ void poorLiquid(Drinks liquidType, int portion) {
     }
     
   motorCounts[liquidType] += portion;
-  drinkMotors[liquidType]->write(70);   // вернуться
-  delay(770);
-  drinkMotors[liquidType]->write(90);
+  drinkMotors[liquidType]->write(0);   
+  drinkMotors[liquidType]->write(100);   
   delay(time);
-  drinkMotors[liquidType]->write(70);   // вернуться
-  delay(760);
-  drinkMotors[liquidType]->write(90);
+  drinkMotors[liquidType]->write(0);
 }
 
 //---------------lower servo---------------

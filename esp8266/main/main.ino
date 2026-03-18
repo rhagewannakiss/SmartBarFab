@@ -2,9 +2,9 @@
 #include <ESP8266HTTPClient.h>
 #include <SoftwareSerial.h>
 
-const char* ssid = "Aliffka";
-const char* password = "19fuckyoubitch1041";
-const char* serverUrl = "http://192.168.106.89:8080/api/next_drink";
+const char* ssid = "Redmi 14C";
+const char* password = "alinamycrush";
+const char* serverUrl = "http://10.164.226.198:8080/api/next_drink";
 
 WiFiClient wifiClient;
 
@@ -17,6 +17,8 @@ void setup() {
     delay(500);
   }
 }
+
+
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
@@ -35,3 +37,4 @@ void loop() {
 
   delay(5000);
 }
+
